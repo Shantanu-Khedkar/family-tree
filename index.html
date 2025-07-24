@@ -114,11 +114,13 @@ index++;
           
           var searchList = document.getElementById("search-list");
           var searchNode = document.createElement("li");
-          var searchCode = "var doc= new DOMParser().parseFromString(this.innerHTML, 'text/xml'); document.getElementById('search-bar').value=doc.firstChild.innerHTML; nodeSearched=doc.firstChild.innerHTML; document.getElementById('search-button').click(); "
+          var searchCode = "var doc= new DOMParser().parseFromString(this.innerHTML, 'text/xml'); document.getElementById('search-bar').value=doc.firstChild.innerHTML; nodeSearched=this.id; document.getElementById('search-button').click(); "
+          searchNode.setAttribute("id", "s-"+randcount.toString())
           searchNode = searchList.appendChild(searchNode);
           searchNode.style.display = "none";
           searchNode.innerHTML = anchor(element[0]);
           searchNode.setAttribute("onclick", searchCode);
+          
           var tree = document.createElement("ul");
           if (element[2] == "none") {
             var li = document.createElement("li")
@@ -127,10 +129,12 @@ index++;
             var Aspan;
             if (element[1] != "none") {
               searchNode = document.createElement("li");
+              searchNode.setAttribute("id", "s-"+randcount.toString())
               searchNode = searchList.appendChild(searchNode);
               searchNode.style.display = "none";
               searchNode.innerHTML = anchor(element[1]);
               searchNode.setAttribute("onclick", searchCode);
+              
               var a1 = anchor(element[0], "member")
               var a2 = anchor(element[1], "spouse")
               Aspan = span(a1, a2);
@@ -158,6 +162,7 @@ index++;
             var Aspan;
             if (element[1] != "none") {
               searchNode = document.createElement("li");
+              searchNode.setAttribute("id", "s-"+randcount.toString())
               searchNode = searchList.appendChild(searchNode);
               searchNode.style.display = "none";
               searchNode.innerHTML = anchor(element[1]);
@@ -204,14 +209,14 @@ index++;
 
       }
       function scrollToNode(val) {
-        document.getElementsByName(val)[0].scrollIntoView({ behavior: "smooth", block: "start", inline: "center" });
+        val.scrollIntoView({ behavior: "smooth", block: "start", inline: "center" });
         Array.from(document.getElementsByClassName("focused")).forEach(element => {
           element.classList.remove("focused");
         });
-        document.getElementsByName(val)[0].querySelector("span").classList.add("focused");
-        document.getElementsByName(val)[0].querySelector("span").addEventListener("mouseover", function () {
+        val.querySelector("span").classList.add("focused");
+        val.querySelector("span").addEventListener("mouseover", function () {
           try {
-            document.getElementsByName(val)[0].querySelector("span").classList.remove("focused");
+            val.querySelector("span").classList.remove("focused");
           } catch (error) {
             return;
           }
@@ -289,8 +294,8 @@ index++;
         }
         Array.from(li).reverse().forEach(element => {
           if (element.style.display != "none") {
-            var doc = new DOMParser().parseFromString(element.innerHTML, 'text/xml');
-            nodeSearched = doc.firstChild.innerHTML;
+            
+            nodeSearched = element.id;
           }
         });
       }
@@ -301,20 +306,23 @@ index++;
       }
 
       function scrollTree() {
+        
         input = document.getElementById("search-bar");
 
-        if (document.getElementsByName(nodeSearched)[0] == null) {
+        if (nodeSearched == null) {
           Array.from(document.getElementById("tree").getElementsByTagName("a")).forEach(function (element, index) {
             if (element.innerHTML == nodeSearched) {
-              scrollToNode(element.parentElement.parentElement.getAttribute("name"));
+              
+              scrollToNode(document.getElementById(nodeSearched.replace("s-", "")));
               return;
             }
           });
 
         } else {
-          scrollToNode(nodeSearched);
+          
+          scrollToNode(document.getElementById(nodeSearched.replace("s-", "")));
           input = document.getElementById("search-bar");
-          input.value = nodeSearched;
+          input.value = document.getElementById(nodeSearched).innerText;
         }
       }
       function reveal_collapse(node) {
@@ -477,7 +485,7 @@ index++;
           console.log(indexcount + " : " + Name);
           console.log()
           indexcount++;
-          document.getElementsByName(Name)[0].getElementsByTagName("span")[0].appendChild(clon);
+          document.getElementById(CardNum).getElementsByTagName("span")[0].appendChild(clon);
           Names.push(Name);
         }
 
