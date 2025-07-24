@@ -49,7 +49,7 @@ TODO LIST:
     <center>
       
       <div id="treeModule" style="display:none">
-        <button style="position:absolute;z-index:30; left:10px"onclick="toggleAll()">ToggleExpand</button>
+        
         <div class="treeContainer no-select" id="tree" width="100%">
           <center><i class="fa-solid fa-users fa-beat-fade"
               style="font-size: 150px; margin-top: 100px; color: #007795;"></i></center>
@@ -114,7 +114,7 @@ index++;
           
           var searchList = document.getElementById("search-list");
           var searchNode = document.createElement("li");
-          var searchCode = "var doc= new DOMParser().parseFromString(this.innerHTML, 'text/xml'); document.getElementById('search-bar').value=doc.firstChild.innerHTML; nodeSearched=this.id; document.getElementById('search-button').click(); "
+          var searchCode = "var doc= new DOMParser().parseFromString(this.innerHTML, 'text/xml');  nodeSearched=this.id; nameSearched=this.innerText; document.getElementById('search-button').click(); "
           searchNode.setAttribute("id", "s-"+randcount.toString())
           searchNode = searchList.appendChild(searchNode);
           searchNode.style.display = "none";
@@ -193,7 +193,7 @@ index++;
         Array.from(sheet_data.values).forEach(function (element, index) {
           showContent(index, element[0], MemberUserImages[index], SpouseUserImages[index]);
         });
-       
+       toggleAll()
       }
 
 
@@ -209,6 +209,22 @@ index++;
 
       }
       function scrollToNode(val) {
+        var ancestry = []
+        
+        current = parseInt(val.id)
+        while (!isNaN(current)){
+          ancestry.push(current)
+          current=sheet_data.values[parseInt(current)][2]-2
+          console.log(current)
+        }
+
+        console.log(ancestry)
+        ancestry.reverse()
+        last = ancestry.pop()
+        ancestry.forEach(button =>{
+          reveal(document.getElementById(button).getElementsByTagName('div')[2])
+        })
+
         val.scrollIntoView({ behavior: "smooth", block: "start", inline: "center" });
         Array.from(document.getElementsByClassName("focused")).forEach(element => {
           element.classList.remove("focused");
@@ -223,12 +239,7 @@ index++;
         });
       }
 
-      function toggleAll(){
-        Array.from(document.getElementById("tree").querySelector("ul").getElementsByTagName("ul")).forEach(element => {
-          element.parentElement.querySelectorAll("div")[2].click();
-        });
 
-      }
       function toggle(elem, type) {
         console.log(elem)
         type=type.getAttribute("class");
@@ -295,9 +306,11 @@ index++;
         }
         Array.from(li).reverse().forEach(element => {
           if (element.style.display != "none") {
-            
+
             nodeSearched = element.id;
-            nameSearched = element.innerText
+            
+            nameSearched = document.getElementById(nodeSearched.replace("s-", "")).getAttribute('name')
+            
           }
         });
       }
@@ -310,7 +323,7 @@ index++;
       function scrollTree() {
         
         input = document.getElementById("search-bar");
-
+        
         if (nodeSearched == null) {
           Array.from(document.getElementById("tree").getElementsByTagName("a")).forEach(function (element, index) {
             if (element.innerHTML == nodeSearched) {
@@ -324,10 +337,21 @@ index++;
           
           scrollToNode(document.getElementById(nodeSearched.replace("s-", "")));
           input = document.getElementById("search-bar");
-          console.log(nameSearched)
+          
           input.value = nameSearched;
         }
       }
+      function reveal(node){
+        node.parentElement.querySelector('ul').style.display = 'table';
+            node.innerHTML = "<i class='fa-solid fa-circle-up'></i>";
+      }
+      function toggleAll(){
+        Array.from(document.getElementById("tree").querySelector("ul").getElementsByTagName("ul")).forEach(element => {
+          element.parentElement.querySelectorAll("div")[2].click();
+        });
+
+      }
+
       function reveal_collapse(node) {
         if (node.parentElement.querySelector('ul') != null) {
           if (node.parentElement.querySelector('ul').style.display != 'none') {
