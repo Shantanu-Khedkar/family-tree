@@ -1,0 +1,597 @@
+    /*  :root {
+  --Background: url(Kamini.jpg);
+  --TreeOutline: #f3f5f5;
+  --Node: rgba(228, 243, 255, 0.921);
+  --NodeSelect: rgb(94 230 188);
+  --PrimaryText: rgb(0, 0, 0);
+  --SecondaryText: black;
+  --FocusText: black;
+  --ScrollBar: rgb(116, 116, 116);
+  
+}*/
+:root {
+    --LoginPageBackground: url(Kamini.jpg);
+    --Background: url(Sky.jpg);
+    --TreeOutline: rgb(103, 103, 103);
+    --Node: rgba(228, 243, 255, 0.921);
+    --NodeSelect: #006eb2;
+    --PrimaryText: black;
+    --SecondaryText: black;
+    --FocusText: rgb(172, 214, 255);
+    --FocusIcon: rgb(24, 59, 108)(0, 102, 255);
+    --ScrollBar: rgb(116, 116, 116);
+
+  }
+
+  html {
+    height: 100%;
+  }
+
+  .no-select {
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10 and IE 11 */
+    user-select: none;
+    /* Standard syntax */
+  }
+
+  body {
+    background-image: var(--LoginPageBackground);
+    background-size: cover;
+    background-color: rgb(231, 244, 255);
+    overflow: overlay;
+  }
+
+  ::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+  }
+
+  ::-webkit-scrollbar-track {
+    display: none;
+    background-color: rgba(223, 223, 223, 0);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: 4px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: var(--ScrollBar);
+    text-align: center;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background-color: rgba(223, 223, 223, 0);
+  }
+
+  .treeContainer {
+    position: relative;
+    height: 400px;
+    zoom: 1.1;
+    overflow-x: overlay;
+    padding-left: 20%;
+    padding-right: 20%;
+    overflow-y: overlay;
+    background: var(--Background) rgb(251, 254, 255) 50% / cover no-repeat;
+    background-size: cover;
+    /*Shortlisted Backgrounds 
+    Sunshine-Blossom.jpg
+    
+    */
+  }
+
+  /*The bare (unstyled) classes were used from https://www.cssscript.com/tag/family-tree/  */
+  .tree,
+  .tree ul,
+  .tree li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+
+  .tree {
+    margin: 0 0 1em;
+    text-align: center;
+  }
+
+  .tree,
+  .tree ul {
+    /**/
+    display: table;
+  }
+
+  .tree ul {
+    /**/
+    width: 100%;
+  }
+
+  .tree li {
+    display: table-cell;
+    padding: .5em 0;
+    vertical-align: top;
+
+  }
+
+  .tree li:before {
+    /**/
+    outline: solid 1.25px var(--TreeOutline);
+    content: "";
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: -1px;
+  }
+
+  .tree li:first-child:before {
+    /**/
+    left: 50%;
+  }
+
+  .tree li:last-child:before {
+    /**/
+    right: 50%;
+  }
+
+  .tree code,
+  .tree span {
+
+
+    border-radius: 10px 10px 2px 2px;
+    display: inline-block;
+    height: 2.8em;
+    min-width: 185px;
+    white-space: nowrap;
+    margin: 0 .3em .2em;
+    padding: .2em 0em .2em 0em;
+    border: none;
+    position: relative;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px -2px;
+    background-color: var(--Node);
+
+    transition: height 0.5s, min-width 0.5s, border-radius 0.5s, background-color 0.5s;
+  }
+
+  .tree span.focused {
+    background-color: var(--NodeSelect);
+    box-shadow: var(--NodeSelect) 0px 3px 8px -2px;
+  }
+
+  .tree .opened {
+    height: 250px;
+    min-width: 220px;
+    border-radius: 10px 10px 2px 2px;
+  }
+
+  .tree span a.spouse {
+    color: var(--SecondaryText);
+  }
+
+  .tree span a {
+    color: var(--PrimaryText);
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: 100;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 0px;
+    font-size: medium;
+    transition: color 0.2s, font-size 0.2s;
+  }
+
+  .tree span a:hover {
+    color: rgb(0, 0, 0);
+    font-size: large;
+  }
+
+  .tree span.focused a {
+    color: var(--FocusText)
+  }
+  .tree span.focused i {
+    color: var(--FocusIcon)
+  }
+  .tree span hr {
+    color: solid grey;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+  }
+
+  .tree ul:before,
+  /**/
+  .tree code:before,
+  /**/
+  .tree span:before {
+    /**/
+    outline: solid 1.25px var(--TreeOutline);
+    content: "";
+    height: .5em;
+    left: 50%;
+    position: absolute;
+
+  }
+
+  .tree ul:before {
+    /**/
+    top: -.6em;
+  }
+
+  .tree code:before,
+  .tree span:before {
+    top: -.55em;
+  }
+
+  .tree>li {
+    /**/
+    margin-top: 0;
+  }
+
+
+  .tree>li:before,
+  /**/
+  .tree>li:after,
+  /**/
+  .tree>li>code:before,
+  /**/
+  .tree>li>span:before {
+    /**/
+    outline: none;
+  }
+
+  /*Card*/
+
+  /* Next & previous buttons */
+
+  /* unvisited link */
+  a {
+    text-decoration:none;
+    text-decoration-color: rgba(0, 0, 0, 0);
+    transition: all 0.2s ease;
+  }
+  a:focus{
+    text-decoration: underline;
+    text-decoration-color: rgb(0, 0, 0);
+  }
+
+  a:link {
+    color: rgb(0, 0, 0);
+  }
+
+  /* visited link */
+  a:visited {
+    color: rgb(0, 0, 0);
+  }
+
+  /* mouse over link */
+  a:hover {
+    color: rgb(19, 19, 19);
+  }
+
+  /* selected link */
+  a:active {
+    color: rgb(61, 61, 61);
+  }
+
+  .prev,
+  .next {
+    cursor: pointer;
+    position: absolute;
+    top: 100px;
+    width: auto;
+    padding: 16px;
+    margin-top: -22px;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Position the "next button" to the right */
+  .next {
+    right: -10px;
+    border-radius: 10px 0 0 10px;
+  }
+
+  .prev {
+    left: -10px;
+    border-radius: 0 10px 10px 0;
+  }
+
+  /* On hover, add a black background color with a little bit see-through */
+  .prev:hover,
+  .next:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+
+  .fade {
+    transition: opacity 0.5;
+  }
+
+
+
+  .ProfileCard {
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    width: 200px;
+    overflow: hidden;
+    display: block;
+    position: relative;
+    padding-bottom: 10px;
+    transition: width 0.8s;
+    margin-bottom: 10px;
+  }
+
+  .ProfileCardPicture {
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+height:204px;
+width:auto;
+    position: absolute;
+    top: 10px;
+
+  }
+
+  .PFName {
+    font-family: 'Varela Round', cursive;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 0px;
+    margin-top: 5px;
+
+  }
+
+  .PFIcon {
+    margin-left: 0px;
+    margin-right: .5em;
+    margin-bottom: 7px;
+  }
+
+  .PFCPContainer {
+    margin-top: 0%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    height: calc(100% - 2.9em);
+    overflow: hidden;
+    border-radius: 0px 0px 2px 2px;
+  }
+
+  .expand_button {
+    margin-bottom: .6em;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    display: inline-block;
+    position: relative;
+    width: 185px;
+    background-color: #6b6b6b;
+    color: #d2d2d2;
+    border-radius: 2px 2px 10px 10px;
+  }
+  .open_detailed {
+    margin: 0px;
+    padding:0px;
+    display: inline-block;
+    position: absolute;
+    top:3px;
+    right:1.5px;
+    width: 20px;
+    background-color: #6b6b6b00;
+    color: #363636;
+    border-radius: 2px 2px 10px 10px;
+    transition: all 0.2s ease-in;
+  }
+  /*Search Bar*/
+
+  .search-bar {
+    min-width: 300px;
+    padding: 6px;
+    margin-top: 12px;
+    border-radius: 10px 0px 10px 0px;
+    border: none;
+    font-weight: bold;
+    color: #383838;
+    text-align: left;
+    outline: none;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 4px 0px;
+  }
+
+  .search-bar:focus::placeholder {
+    opacity: 0;
+    font-size: 10px;
+  }
+
+  .search-bar::placeholder {
+    color: #5b5b5b;
+    font-family: "Varela Round", sans-serif;
+    font-weight: bold;
+    text-align: left;
+    transition: opacity 0.3s, font-size 0.3s;
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10 and IE 11 */
+    user-select: none;
+    /* Standard syntax */
+  }
+
+  .search-button {
+    height: 27.2px;
+    width: 37px;
+    margin-left: -37px;
+    padding-bottom: -1px;
+    border-radius: 10px 0px 8px 0px;
+    font-weight: bold;
+    border: none;
+    color: #383838;
+    background-color: #84cebe;
+    text-align: center;
+    transition: color 0.5s, background-color 0.5s;
+  }
+
+  .search-button:hover {
+    color: #114184;
+    background-color: rgb(149, 205, 255);
+
+  }
+
+  .search-button:active {
+    transition: color 0.2s, background-color 0.2s;
+    color: #001d46;
+    background-color: rgb(167, 214, 255);
+  }
+
+  .search-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 300px;
+    max-height: 200px;
+    border-radius: 0px 0px 20px 20px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 4px 0px;
+    margin-bottom: 100px;
+  }
+
+  .search-list li a {
+    border: 1px solid #ddd;
+    margin-top: -1px;
+    /* Prevent double borders */
+    background-color: #f5feff;
+    padding: 8px;
+    text-decoration: none;
+    font-size: 18px;
+    font-family: "Varela Round", sans-serif;
+    color: black;
+    display: block;
+    max-width: 100%;
+  }
+
+
+  .search-list li a:hover:not(.header) {
+    background-color: #eee;
+  }
+
+  /*login window*/
+  .login-box {
+    padding: 2px;
+    background-color: #e0ebfc95;
+    backdrop-filter: blur(5px);
+    margin-top: 30px;
+    margin-right: auto;
+    margin-left: auto;
+    width: 700px;
+    height: 500px;
+    border-radius: 30px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 3px 3px 0px;
+    transition: opacity 0.5s;
+  }
+
+  .login-heading {
+    font-family: "Varela Round", sans-serif;
+    font-weight: 900;
+    font-size: 60px;
+    color: rgba(29, 29, 29, 0.74);
+  }
+
+  .login-fields {
+    font-family: "Varela Round", sans-serif;
+    font-weight: 900;
+    padding: 10px;
+    outline: none;
+    font-size: 30px;
+    width: 400px;
+    background: transparent;
+    border: none;
+    backdrop-filter: blur(0.2px);
+    margin-top: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 6px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 3px 3px 0px;
+    border: 3px solid rgba(255, 255, 255, 0);
+    transition: border 0.5s;
+  }
+
+  .login-fields::placeholder {
+    opacity: 1;
+    font-size: 30px;
+    transition: opacity 0.25s, font-size 0.25s;
+  }
+
+  .login-fields:focus::placeholder {
+    opacity: 0;
+    font-size: 20px;
+  }
+
+  .login-button {
+    padding: 10px;
+    font-family: "Varela Round", sans-serif;
+    font-weight: 900;
+    outline: none;
+    font-size: 30px;
+    width: 400px;
+    background-color: #0885728f;
+    border: none;
+    color: rgb(186, 255, 241);
+    margin-top: 20px;
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 6px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 3px 3px 0px;
+    transition: color 0.5s, background-color 0.5s;
+  }
+
+  .login-button:hover {
+    color: rgb(203, 248, 239);
+    background-color: #015c75a9;
+
+  }
+
+  .login-button:active {
+    transition: color 0.2s, background-color 0.2s;
+    color: #d7f7ff;
+    background-color: #025065a9
+  }
+
+  .alert-text {
+    color: rgb(153, 7, 7);
+    margin-top: 5px;
+    margin-bottom: none;
+    font-weight: 900;
+    font-family: "Varela Round", sans-serif;
+    font-size: larger;
+  }
+
+  .shake {
+    animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
+    transform: translate3d(0, 0, 0);
+  }
+
+  @keyframes shake {
+    /*Credit to https://css-tricks.com/snippets/css/shake-css-keyframe-animation/ for the keyframes of this animation*/
+
+    10%,
+    90% {
+      transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+      transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+      transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+      transform: translate3d(4px, 0, 0);
+    }
+  }

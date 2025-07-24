@@ -1,0 +1,708 @@
+<!DOCTYPE HTML>
+<html>
+
+<!--
+
+TODO LIST:
+
+4. Trace to the member when searched and reveal the tree path to the main ancestor.
+
+1. Make toggle image dropdown handling more graceful (Clicking outside instead of tiny button)
+
+2. Remove references to family members in plaintext
+
+3. Encrypt Google Sheets data with Fernet
+
+4. Make it modular
+
+5. Add comments!
+
+6. Make it responsive;
+
+-->
+
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@500&family=Varela+Round&display=swap"
+    rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+ </head>
+
+<body>
+  
+  <center>
+    <div class="login-box" id="login-box">
+      <h1 class="login-heading no-select">Welcome</h1>
+      <input class="login-fields" placeholder="Username" id="UN" autocomplete="off"></input><br style="margin:none"
+        class="no-select">
+      <input class="login-fields" type="password" placeholder="Password" id="PSWD"></input><i id="PSWDtoggle"
+        class="fa-solid fa-eye no-select" style="transform:translateX(-40px); width:0px; font-size: x-large;"
+        onclick="toggleVisibility()"></i><br style="margin:none" class="no-select">
+      <div style="width:400px; margin-bottom: none; margin-top: none; height:23">
+        <p id="password-alert" class="alert-text no-select" style="text-align: left; display:none;">- Incorect password
+          or username</p>
+      </div>
+
+      <button id="login-button" class="login-button no-select"
+        onclick="passwordAttempt(document.getElementById('UN').value, document.getElementById('PSWD').value)">Login</button>
+    </div>
+    
+    <center>
+      
+      <div id="treeModule" style="display:none">
+        <button style="position:absolute;z-index:30; left:10px"onclick="toggleAll()">ToggleExpand</button>
+        <div class="treeContainer no-select" id="tree" width="100%">
+          <center><i class="fa-solid fa-users fa-beat-fade"
+              style="font-size: 150px; margin-top: 100px; color: #007795;"></i></center>
+        </div>
+        <center>
+
+          <input id="search-bar" class="search-bar" placeholder="  Search" onkeyup="searchTree()" onfocus="searchTree()"
+            onblur="setTimeout(() => {retractSearch()},200);">
+          <button class="search-button no-select" id="search-button" onclick="scrollTree()"><i
+              class="fa-solid fa-magnifying-glass"></i></button>
+          <ul class="search-list" id="search-list"></ul>
+          
+        </center>
+      </div>
+      
+      <!--<li style="display:none"><a href="#">Adele</a></li>
+      <li style="display:none"><a href="#">Agnes</a></li>
+    
+      <li style="display:none"><a href="#">Billy</a></li>
+      <li style="display:none"><a href="#">Bob</a></li>
+    
+      <li style="display:none"><a href="#">Calvin</a></li>
+      <li style="display:none"><a href="#">Christina</a></li>
+      <li style="display:none"><a href="#">Deepak (Mandar)</a></li>-->
+    
+    <!--Card-->
+    <template>
+      <div class="PFCPContainer" id="cont">
+        <img
+          src=""
+          width="300" height="204" class="ProfileCardPicture fade">
+        <a class="prev" onclick="plusSlides(-1, this.parentElement.id, 'member')"><i class="fa-solid fa-circle-left"></i></a>
+        <a class="next" onclick="plusSlides(1, this.parentElement.id, 'member')"><i class="fa-solid fa-circle-right"></i></a>
+      </div>
+    </template>
+
+    <script language="JavaScript" type="text/javascript"
+      src="https://kjur.github.io/jsrsasign/jsrsasign-latest-all-min.js"></script>
+    <script>
+      var MemberUserImages=[]; 
+      var SpouseUserImages=[];
+      var Mysheets=[];
+      function populate() {
+        var randcount = 0;
+        Mysheets=sheet_data;
+        //sheet_data.values.shift()
+        console.log(sheet_data.values)
+        sheet_data.values.forEach(elements => {
+          var temp =[];
+          var index=0;
+          temp.push([elements[3], elements[4],elements[5], elements[6], elements[7]],[elements[8], elements[9],elements[10], elements[11], elements[12]]);
+
+            temp.forEach(element => {
+temp[index]=element.filter(a => a !== 'none');
+index++;
+
+          });
+          MemberUserImages.push([temp[0][0], temp[0][1],temp[0][2],temp[0][3],temp[0][4]])
+          SpouseUserImages.push([temp[1][0], temp[1][1],temp[1][2],temp[1][3],temp[1][4]])
+        });
+        sheet_data.values.forEach(element => {
+          
+          var searchList = document.getElementById("search-list");
+          var searchNode = document.createElement("li");
+          var searchCode = "var doc= new DOMParser().parseFromString(this.innerHTML, 'text/xml'); document.getElementById('search-bar').value=doc.firstChild.innerHTML; nodeSearched=doc.firstChild.innerHTML; document.getElementById('search-button').click(); "
+          searchNode = searchList.appendChild(searchNode);
+          searchNode.style.display = "none";
+          searchNode.innerHTML = anchor(element[0]);
+          searchNode.setAttribute("onclick", searchCode);
+          var tree = document.createElement("ul");
+          if (element[2] == "none") {
+            var li = document.createElement("li")
+            li.setAttribute("id", '0')
+            li = tree.appendChild(li);
+            var Aspan;
+            if (element[1] != "none") {
+              searchNode = document.createElement("li");
+              searchNode = searchList.appendChild(searchNode);
+              searchNode.style.display = "none";
+              searchNode.innerHTML = anchor(element[1]);
+              searchNode.setAttribute("onclick", searchCode);
+              var a1 = anchor(element[0], "member")
+              var a2 = anchor(element[1], "spouse")
+              Aspan = span(a1, a2);
+            } else {
+              var a1 = anchor(element[0]);
+              var a2 = anchor("")
+              Aspan = span(a1, a2);
+            }
+            li.innerHTML = li.innerHTML + Aspan + "<br><div class='expand_button' onclick='reveal_collapse(this)'><i class='fa-solid fa-circle-down'></i></div>" + "<ul></ul>";
+            li.setAttribute("name", element[0])
+            tree.className = "tree";
+            document.getElementById("tree").innerHTML = "";
+            document.getElementById("tree").append(tree);
+            li.querySelectorAll("div")[1].click();
+          } else {
+            var li = document.createElement("li")
+
+            test_arrray = document.getElementsByName(sheet_data.values[parseInt(element[2]-2)][0])
+            if (test_arrray.length > 1){
+              console.log(test_arrray)
+            }
+            console.log("HEY", parseInt(element[2]-2))
+            console.log(element)
+            li = document.getElementById(parseInt(element[2]-2)).getElementsByTagName("ul")[0].appendChild(li);
+            var Aspan;
+            if (element[1] != "none") {
+              searchNode = document.createElement("li");
+              searchNode = searchList.appendChild(searchNode);
+              searchNode.style.display = "none";
+              searchNode.innerHTML = anchor(element[1]);
+              searchNode.setAttribute("onclick", searchCode);
+              var a1 = anchor(element[0], "member")
+              var a2 = anchor(element[1], "spouse")
+              Aspan = span(a1, a2);
+            } else {
+              var a1 = anchor(element[0], "member");
+              var a2 = anchor("")
+              Aspan = span(a1, a2);
+            }
+            li.innerHTML = li.innerHTML + Aspan + "<br><div class='expand_button' onclick='reveal_collapse(this)'><i class='fa-solid fa-circle-down'></i></div>" + "<ul></ul>";
+            li.setAttribute("name", element[0])
+            console.log(randcount, element[0])
+            li.setAttribute('id', randcount.toString())
+            //li.querySelectorAll("div")[1].click();
+            
+          }
+          randcount ++
+        });
+        Array.from(document.getElementsByTagName("ul")).forEach(element => {
+          if (element.innerHTML == "") {
+            element.parentElement.querySelectorAll("div")[1].remove();
+            element.remove();
+          }
+        });
+        Array.from(sheet_data.values).forEach(function (element, index) {
+          showContent(index, element[0], MemberUserImages[index], SpouseUserImages[index]);
+        });
+       
+      }
+
+
+      function anchor(text, cls = "") {
+        return ("<a class='" + cls + "'" + " tabindex=2 onclick='toggle(this.parentElement, this)'" + ">" + text + "</a>")
+      }
+      function span(anchor1, anchor2 = null) {
+        if (anchor2 == null) {
+          return ("<span class='closed' tabindex=1 >" + anchor1 +"<div style='opacity:0' onclick='drpdwn(this.parentElement)'class='open_detailed' ><i class='fa-solid fa-circle-up'></i></div>"+"</span>");
+        } else {
+          return ("<span class='closed' tabindex=1 >" + anchor1 + "<hr>" + anchor2 +"<div style='opacity:0' onclick='drpdwn(this.parentElement)'class='open_detailed' ><i class='fa-solid fa-circle-up'></i></div>"+ "</span>");
+        }
+
+      }
+      function scrollToNode(val) {
+        document.getElementsByName(val)[0].scrollIntoView({ behavior: "smooth", block: "start", inline: "center" });
+        Array.from(document.getElementsByClassName("focused")).forEach(element => {
+          element.classList.remove("focused");
+        });
+        document.getElementsByName(val)[0].querySelector("span").classList.add("focused");
+        document.getElementsByName(val)[0].querySelector("span").addEventListener("mouseover", function () {
+          try {
+            document.getElementsByName(val)[0].querySelector("span").classList.remove("focused");
+          } catch (error) {
+            return;
+          }
+        });
+      }
+
+      function toggleAll(){
+        Array.from(document.getElementById("tree").querySelector("ul").getElementsByTagName("ul")).forEach(element => {
+          element.parentElement.querySelectorAll("div")[2].click();
+        });
+
+      }
+      function toggle(elem, type) {
+        console.log(elem)
+        type=type.getAttribute("class");
+        elem.parentElement.querySelectorAll("a")[2].setAttribute("onclick", "plusSlides(-1, this.parentElement.id, \""+type+"\")");
+        elem.parentElement.querySelectorAll("a")[3].setAttribute("onclick", "plusSlides(1, this.parentElement.id, \""+type+"\")");
+        plusSlides(0,elem.parentElement.id, type);
+        //console.log(elem.getAttribute("class"));
+        if(elem.getAttribute("class")!="opened"){
+          //console.log(elem.getAttribute("class"))
+          drpdwn(elem);
+        }
+        
+
+      }
+      function drpdwn(elem){
+        state = (elem.getAttribute("class"));
+        if (state == "closed") {
+          elem.setAttribute("class", "opened");
+          elem.querySelectorAll("div")[0].style="opacity:1";
+        } else {
+          elem.setAttribute("class", "closed");
+          elem.querySelectorAll("div")[0].style="opacity:0";
+        }
+      }
+    </script>
+    <script>
+      // Get the input field
+      var input = document.getElementById("search-bar");
+
+      // Execute a function when the user presses a key on the keyboard
+      input.addEventListener("keypress", function (event) {
+        // If the user presses the "Enter" key on the keyboard
+        if (event.key === "Enter") {
+          // Cancel the default action, if needed
+          event.preventDefault();
+          // Trigger the button element with a click
+          document.getElementById("search-button").click();
+
+        }
+      });
+      var nodeSearched;
+      //Searches node in the dropdown of the search input bar
+      function searchTree() {
+        var input, filter, ul, li, a, i, txtValue;
+        input = document.getElementById("search-bar");
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("search-list");
+        li = ul.getElementsByTagName("li");
+        for (i = 0; i < li.length; i++) {
+          a = li[i].getElementsByTagName("a")[0];
+          txtValue = a.textContent || a.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+          } else {
+            li[i].style.display = "none";
+          }
+        }
+
+        if (input.value == "") {
+          Array.from(li).forEach(element => {
+            element.style.display = "none";
+          });
+        }
+        Array.from(li).reverse().forEach(element => {
+          if (element.style.display != "none") {
+            var doc = new DOMParser().parseFromString(element.innerHTML, 'text/xml');
+            nodeSearched = doc.firstChild.innerHTML;
+          }
+        });
+      }
+      function retractSearch() {
+        Array.from(document.getElementById("search-list").getElementsByTagName("li")).forEach(element => {
+          element.style.display = "none";
+        });
+      }
+
+      function scrollTree() {
+        input = document.getElementById("search-bar");
+
+        if (document.getElementsByName(nodeSearched)[0] == null) {
+          Array.from(document.getElementById("tree").getElementsByTagName("a")).forEach(function (element, index) {
+            if (element.innerHTML == nodeSearched) {
+              scrollToNode(element.parentElement.parentElement.getAttribute("name"));
+              return;
+            }
+          });
+
+        } else {
+          scrollToNode(nodeSearched);
+          input = document.getElementById("search-bar");
+          input.value = nodeSearched;
+        }
+      }
+      function reveal_collapse(node) {
+        if (node.parentElement.querySelector('ul') != null) {
+          if (node.parentElement.querySelector('ul').style.display != 'none') {
+            node.parentElement.querySelector('ul').style.display = 'none';
+            node.innerHTML = "<i class='fa-solid fa-circle-down'></i>";
+          } else {
+            node.parentElement.querySelector('ul').style.display = 'table';
+            node.innerHTML = "<i class='fa-solid fa-circle-up'></i>";
+          }
+        }
+        node.parentElement.querySelector("span").scrollIntoView({ behavior: "instant", block: "center", inline: "center" });
+        Array.from(document.getElementsByClassName("focused")).forEach(element => {
+          element.classList.remove("focused");
+        });
+        node.parentElement.querySelector("span").classList.add("focused");
+        node.parentElement.querySelector("span").addEventListener("mouseover", function () {
+          try {
+            node.parentElement.querySelector("span").classList.remove("focused");
+          } catch (error) { return }
+        });
+      }
+      //dblclickCode="if(this.parentElement.querySelector('ul')!=null){if(this.parentElement.querySelector('ul').style.display!='none'){this.parentElement.querySelector('ul').style.display='none'}else{this.parentElement.querySelector('ul').style.display='table'}}"
+    </script>
+    <script src="Crypto.js"></script>
+    <script>
+      
+
+      //Handles Google Sheets GAPI stuff.
+
+
+      const SPREADSHEET_ID = "1fRnnoFGOOy6bij00WrskrUEJQBXf7RU4EKk8_x7JHHg"
+      const SPREADHSHEET_RANGE = "FamilyTree"
+      const FUNCTION_NAME = populate; //Name of the function to be called after sucessfull authentication
+
+      var accesstoken
+      var sheet_data
+
+      /*setup_auth() generates the JWT (JSON Web Token) used for initial authorization 
+      via the jsrsasign library (need to move to libsodium at some point). The JWT is 
+      generated based on the private key and email address of a service account, 
+      eliminating the need of user authentication via Google.
+      
+      Note: Most of this function was copied and pasted from TerryR999's comment on
+      Github at https://github.com/google/google-api-javascript-client/issues/428.
+      Thank you!
+      */
+
+      function setup_auth(svcacct, privkey) {
+        gapi.load('client', () => { })
+        var header = { "alg": "RS256", "typ": "JWT" }
+        var to_be_signed = {}
+        to_be_signed.aud = "https://www.googleapis.com/oauth2/v3/token"
+        to_be_signed.scope = "https://www.googleapis.com/auth/spreadsheets.readonly"
+        to_be_signed.iss = svcacct
+        to_be_signed.exp = KJUR.jws.IntDate.get("now + 1hour")
+        to_be_signed.iat = KJUR.jws.IntDate.get("now")
+        var stringified_data = JSON.stringify(to_be_signed)
+        var JWT = KJUR.jws.JWS.sign(null, header, stringified_data, privkey)
+        return JWT
+      }
+
+
+      /*
+      authenticate() uses the JWT to authenticate with the Google API via
+      an XMLHTTPRequest.  The XHR returns an access token to be used to 
+      authenticate for accessing google sheets. This token is used by the 
+      callback.
+       */
+      function authenticate(callback, JWT) {
+        //Prepare XHR with JWT and other stuff.
+        var XHR = new XMLHttpRequest()
+        var urlEncodedData = ""
+        var urlEncodedDataPairs = []
+        urlEncodedDataPairs.push(encodeURIComponent("grant_type") + '=' + encodeURIComponent("urn:ietf:params:oauth:grant-type:jwt-bearer"))
+        urlEncodedDataPairs.push(encodeURIComponent("assertion") + '=' + encodeURIComponent(JWT))
+        urlEncodedData = urlEncodedDataPairs.join('&').replace(/%20/g, '+')
+
+        //
+        XHR.addEventListener('load', function (event) {
+          token = JSON.parse(XHR.responseText)
+          try {
+            gapi.client.setToken(token)
+            trioAuthDone = true
+            trioTokenExpires = new Date()
+            trioTokenExpires.setSeconds(trioTokenExpires.getSeconds() + token.expires_in - 300) //Now + token expiry minus 5 minutes
+            console.log("Auth Done")
+          } catch (error) {
+            console.error("Error: " + error);
+            console.log("Error has been resolved")
+          }
+
+          callback()
+        })
+        XHR.addEventListener('error', function (event) {
+          console.log('Error in Auth: ' + event)
+          console.log("Authorization failed")
+        })
+        XHR.open('POST', 'https://www.googleapis.com/oauth2/v3/token')
+        XHR.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+        XHR.send(urlEncodedData)
+      }
+
+      /*
+      get_sheet_data() uses the access token to get the spreadsheet data from a
+      specific range. The gapi methods could be used, but they don't work on 
+      file:// paths (which could possibly mean drv.tw) so the XMLHTTPRequest is 
+      manually crafted.
+       */
+      function get_sheet_data(range, callback) {
+        var XHR2 = new XMLHttpRequest()
+        XHR2.open('GET', 'https://sheets.googleapis.com/v4/spreadsheets/' + SPREADSHEET_ID + '/values/' + range)
+        XHR2.setRequestHeader("Authorization", "Bearer " + token["access_token"])
+        XHR2.onreadystatechange = function () {
+          if (XHR2.readyState == 4) {
+            sheet_data = JSON.parse(XHR2.responseText)
+
+            console.log("Success, authenticated to access GoogleSheet: " + SPREADSHEET_ID + ", " + range);
+            callback();
+          }
+        }
+        XHR2.addEventListener('error', function (event) {
+          console.log('Error in Auth: ' + event)
+          console.log("Authorization failed")
+        })
+        XHR2.send()
+
+      }
+
+      //Called on load of gapi, so you don't have to manually call it.
+      function gapistuff(range, key, serviceAccount) {
+        authenticate(() => { get_sheet_data(range, FUNCTION_NAME) }, setup_auth(serviceAccount, key))
+      }
+      function getData(range) {
+        get_sheet_data(range, () => { return sheet_data.values });
+      }
+    </script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://kit.fontawesome.com/b1bed040fa.js" crossorigin="anonymous"></script>
+    <script>
+      
+
+      //Card
+      var SpouseCardSlides = []
+      var MemberCardSlides = []
+
+      var indexcount=0;
+      var Names = [];
+      var repeatedNames = []
+      function showContent(CardNum, Name, MemberCarousel = null, SpouseCarousel = null) {
+        let temp = document.getElementsByTagName("template")[0];
+        temp.content.querySelector("div").id = CardNum;
+        Card = temp.content.querySelector("div");
+        MemberCardSlides.push(MemberCarousel);
+        SpouseCardSlides.push(SpouseCarousel);
+        Card.children[0].src = MemberCarousel[0];
+        let clon = temp.content.cloneNode(true);
+
+          console.log(indexcount + " : " + Name);
+          console.log()
+          indexcount++;
+          document.getElementsByName(Name)[0].getElementsByTagName("span")[0].appendChild(clon);
+          Names.push(Name);
+        }
+
+
+      var noImage="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930"
+      var slideNum = 0;
+      function plusSlides(num, CardID, type) {
+        var SlideSet = 0;
+        if(type=="member"){
+        SlideSet = MemberCardSlides[CardID];
+        }else{
+          SlideSet = SpouseCardSlides[CardID];
+        }
+        
+        var Card = document.getElementById(CardID);
+        slideNum = slideNum + num;
+        if (slideNum == -1) { slideNum = SlideSet.length - 1; }
+        if (slideNum == SlideSet.length) { slideNum = 0; }
+        if(SlideSet[slideNum]!=undefined){
+
+        Card.getElementsByClassName("ProfileCardPicture")[0].src = SlideSet[slideNum];
+        }else{
+          Card.getElementsByClassName("ProfileCardPicture")[0].src= noImage;
+        }
+        event.stopPropagation();
+
+      }
+    </script>
+    <script>
+     
+      document.getElementById("PSWD").addEventListener("keyup", function (event) {
+        if (event.key == "Enter") {
+          document.getElementById("login-button").click();
+        }
+
+      });
+      document.getElementById("UN").addEventListener("keyup", function (event) {
+        if (event.key == "Enter") {
+          document.getElementById("login-button").click();
+        }
+
+      });
+      async function passwordAttempt(userName, password) {
+        document.getElementById("PSWD").classList.remove("shake");
+        document.getElementById("UN").classList.remove("shake");
+
+        var errorHandler;
+        var serviceAccount = await validateU(userName);
+
+        if (serviceAccount == "Username is incorrect") {
+          vibratePassword();
+        }
+        if (serviceAccount != "Username is incorrect") {
+
+          var key = await validateP(password);
+          if (key == "Password is incorrect") {
+
+            vibratePassword();
+          }
+          if (key != "Password is incorrect") {
+
+
+            try {
+              gapistuff(SPREADHSHEET_RANGE, key, serviceAccount);
+              document.getElementById("login-box").style.opacity = "0";
+              document.body.style.backgroundImage = "none";
+              setTimeout(() => {
+                document.getElementById("login-box").style.display = "none";
+                document.getElementById("treeModule").style.display = "block";
+              }, 500);
+            }
+            catch (error) {
+              console.log("Error in Google authentication")
+              console.error(error);
+            }
+          }
+
+        }
+
+      }
+
+
+      function vibratePassword() {
+
+
+
+        document.getElementById("PSWD").classList.add("shake");
+        document.getElementById("PSWD").style = "border:3px solid  rgb(153, 7, 7)";
+        document.getElementById("UN").classList.add("shake");
+        document.getElementById("UN").style = "border:3px solid  rgb(153, 7, 7)";
+        document.getElementById("password-alert").style.display = "block"
+        setTimeout(function () {
+          document.getElementById("PSWD").classList.remove("shake");
+          document.getElementById("UN").classList.remove("shake");
+          document.getElementById("password-alert").style.display = "block"
+
+        }, 820);
+      }
+      function toggleVisibility() {
+
+        var x = document.getElementById("PSWD");
+        if (x.type === "password") {
+          document.getElementById("PSWDtoggle").classList.add("fa-eye-slash");
+          document.getElementById("PSWDtoggle").classList.remove("fa-eye");
+          x.type = "text";
+        } else {
+          document.getElementById("PSWDtoggle").classList.add("fa-eye");
+          document.getElementById("PSWDtoggle").classList.remove("fa-eye-slash");
+          x.type = "password";
+        }
+      }
+    </script>
+    <script>
+
+      
+
+
+      function getKeyMaterial(inputkey) {
+        const password = inputkey;
+        const enc = new TextEncoder();
+        return window.crypto.subtle.importKey(
+          "raw",
+          enc.encode(password),
+          "PBKDF2",
+          false,
+          ["deriveBits", "deriveKey"],
+        );
+      }
+
+      function getKey(keyMaterial, salt) {
+        return window.crypto.subtle.deriveKey(
+          {
+            "name": "PBKDF2",
+            salt: salt,
+            "iterations": 100000,
+            "hash": "SHA-256"
+          },
+          keyMaterial,
+          { "name": "AES-GCM", "length": 256 },
+          true,
+          ["encrypt", "decrypt"]
+        );
+      }
+
+
+
+
+      async function decrypt(ciphertext, privkey, salt, iv) {
+        const keyMaterial = await getKeyMaterial(privkey)
+        const finalkey = await getKey(keyMaterial, salt);
+        let decrypted = await window.crypto.subtle.decrypt(
+          {
+            name: "AES-GCM",
+            iv: iv,
+          },
+          finalkey,
+          ciphertext
+        );
+        let dec = new TextDecoder();
+      
+        return new TextDecoder().decode(decrypted)
+      }
+
+
+      async function hash(string) {
+        const utf8 = new TextEncoder().encode(string);
+        const hashBuffer = await window.crypto.subtle.digest('SHA-512', utf8);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray
+          .map((bytes) => bytes.toString(16).padStart(2, '0'))
+          .join('');
+        return hashHex;
+      }
+
+      function buf2hex(buffer) {
+        return [...new Uint8Array(buffer)]
+          .map(x => x.toString(16).padStart(2, '0'))
+          .join('');
+      }
+
+      function hex2buf(myhex) {
+        return new Uint8Array(myhex.match(/[\da-f]{2}/gi).map(function (h) {
+          return parseInt(h, 16)
+        })).buffer
+      }
+
+
+      async function validateP(password) {
+        var PASSWORD;
+        var CIPHERTEXT = "37b65c6dc1aafc4ec278ba00230500335ff9afb0a7764df6aad5b4213bff92cba5cbd4cf1710fd7342a414c01f97bb4a9b78043a4d18d3b9e5f9a34755389d1527f2463e7096478c63142ff06f13503e49d825da8de18ceb8cb54fd67eb4e58aa59b43cc516f6e3b9a974a2272ea5ee0c8a5f5f2483e3657529a923a5a26a4aad4524fd825a1704ce2f55f3b5c06419ded19d83b90d1d8c5a49f9e255958e50ac9bc7d7bc3b0f9c69751d6a842e48a91b2028f5a43aed1171f05de74a10d1151057710f871604a50bb387052ff3b125e2977f5b2d781c20f0b9659df1f59b789bc2f44d821dfe10fa89a481fde047df53736031c49a7e894dfbebd65330cca5aaec207971a9f2ad7d9a0bbb44c329b88d06fd3c8807afe61734871d85e7f18f6942b8322e9226cbcd504367b1cf88540a101e31dd148cff86686a50b7e30a33684764c79d2b82d0b3d1117a91078e3f3ecc18fac988dc634b7f25bc0afb088638434387263ba29c6368e4c78ec2465c31764b2fcc8f47d015ceb3a2f89bd4f71835c606f3f2dfb1b115ee5fc3f8ccb21ab3adc03c704e1358d548873acad59d9c6f8ea7f58349f0fc0749276f00961ddf7695d7bc4cd695d43534003e574889595c185dea436ef2cf815cef21b2cd8d429efcf8eeaa0c92315b6a64368b9cada429367ddae523e3351d4fc7590a05d9e57905053d8da7cdef539ca51877f9d8944c7e23c134be086445027002659b5ebe8bf6db5c110856a64cef773643c70c475a6f67e6aafdc3cca202e825f2936975353510ad4de9c47e4acffb96cd47faed8bcc187d2f4d409ae22bf7e60cd8702d467a696d1e8a4f5b1f36dfdb4979f58d4d6daa311ec6029d5da6f5ded6c83a39689bc5ab5da0f6effb8fc7012513995988e62f5c6d8a9200c06f7d950042dd6e799055d08d049996e7f26737b4911873c14056f06f48b3dbba49b3e23e57209ff81b1e8d2491244857bfa4a8cc601a3f67189bf9083d904eebb5e2da812f9daaf3c553ae9f6aaf504d533bc07f3b8aeefa1fa93a9e3b026b6e3c518668b46a1be1a1443dde6aa626ace388a7956757b934550578a9e84a92e0f2cd93daaf9a5e8ec14f62a0d992a6753cdceb99ff8e6be479dd0cdf958bfb3518bd10c6b5148c60a8083423b25c28938999f12220f08896fc53e310d2594a81a5fc0b6386ac44f7df190a5f17bde26380e3b54b1c07605bd54cf543d008a37a7d238d7b7d4968b6a65c80c082f403447df1cf6637a26067d67ae5e27258c7fc6581268fac86ad922eb0419ffd1b77890d183d2ddf0eaf30e24a6230adcf7f90a8862c73999d71ea05e9a9c50eb8ef56638415fd192bd55bce79f428d070edcb6850651415cb33e531a58d75e2ba3c1cf8b7385b93374e3fffd7994790cf3a9af4d38c2c15ef19f1fd35b4a07d96227a4621d7a29b7cc32303f6c5e4a1be1e1d13a369f06ad70749ed2df91d7ee16d4576b07de51a8a8993729e88155f293bbcee09fa8433030e5a62ece31d2d27502eb24967189934d715ad0d61c7ae2723665941028cd473b7865fdf9012baa7826d5ea699d4630de9e2f18ca2cab172fa68c216b1e559f7b32984e5a07c1e5e17e884c1d9f1b2acb3d26a70b5d74ea8248030a750492fbdb6958e1f86a610fad680b245872e0777495f441a9d43f439d923c0673a4c6b6a53f8abf8ace7d674ce65ce344d3d4ce3491e3062953928a2f5241e7b87d368b6caa2897f4bfc6ed022d3309d72d64746fcdffcb4fbf1c4fb1385ea51e6c50d57e09f392060b585328ccd6aa6e1e7f4b6c454015b5bab2a9db7baa94155da40487802b77aa40614288145032aac6fb389d8e76ed8ceaeb2551b5b9b8ea2a36d9ab5a356180612897d2d4ce1830015bac9f917e59dbc946cb0cca4095717483af6f3f61ca7f285af76c6488e6391a3a13c6a8832a7ec86874f3180834e527688fa48e6333748946ed7ed21123d3c2deee2f4cbb4d53ff2cfd12665032a9e6d41939b95967e1f0e55e833bdad7a9a90e21e15b335402bc3fc563818c68f693ac1a7b40d23f0f5ea03729381f5efe0fe5ddd32b67c1d0d2b4c3d4f692aae8808fa85bc7c3bc1ffb3de408cb783464a614cefdd0e43f7a510eb31334a8ec61d6f15e88e3027f57318b7ae883eac2757672eca5e1d721c484fcaf0483f44f6fee285acbbfe431a15de8c47ea6dd22016c5f8948546707b415ac27355389d71490ead3abfdb84d6e7305b5fc6ca86bffaa74014439aee668b216fa0e0cd0e9b92f7415d4403cc6966be39179cc39f5ea5c70b0c412b0d3c979c89c3b3a9224abff0db5eb3425fe013978dc2d09b4ffef1c15219aa20a9317de4e7d7752bcf75b3425c75e236aecc7e57de7b71688ea06a3d7969a683e2396ee164e06e218355669a391c27c758b868d4199da";
+
+        //Other constants (no need to change these, but if you want to you can).
+        const SALT = new ArrayBuffer("a487a43e205082b48496d1d6adf988eaa8214603");
+        const IV = Uint8Array.from("39eef6ce80ae18505684ae971294a2ca914da51b".match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
+        //Password Decryption
+        PASSWORD = await hash(password);
+        try {
+          var newtext = await decrypt(hex2buf(CIPHERTEXT), PASSWORD, SALT, IV);
+          return newtext;
+        } catch (error) {
+          return "Password is incorrect";
+        }
+
+      }
+
+      async function validateU(username) {
+        var USERNAME;
+        var CIPHERTEXT = "2800723ae2492d2b521ae186039e8b59750132ad804ac20c6d52dd7f7e88061c7b38109afb4cbbd73deb07b806fd33d15cef574e23fbf26eca3586aed4ae201c65c13d"
+
+        //Other constants (no need to change these, but if you want to you can).
+        const SALT = new ArrayBuffer("a487a43e205082b48496d1d6adf988eaa8214603");
+        const IV = Uint8Array.from("39eef6ce80ae18505684ae971294a2ca914da51b".match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
+        //Usename Decryption
+        USERNAME = await hash(username);
+        try {
+          var newtext = await decrypt(hex2buf(CIPHERTEXT), USERNAME, SALT, IV);
+          return newtext;
+        } catch (error) {
+          return "Username is incorrect";
+        }
+
+      }
+
+    </script>
+</body>
+
+
+</html>
