@@ -10,7 +10,7 @@
   
 }*/
 :root {
-    --LoginPageBackground: url(Kamini.jpg);
+    --LoginPageBackground: url(flowers.jpg);
     --Background: url(Sky.jpg);
     --TreeOutline: rgb(103, 103, 103);
     --Node: rgba(228, 243, 255, 0.921);
@@ -596,3 +596,4 @@ width:auto;
     }
 
   }
+
