@@ -15,6 +15,7 @@ To view any other tree, link this client to your own Google account and sheet.
 ### Sheet Data Structure
 1. The opened sheet should be named **FamilyTree**
 2. The format of a node or person in the sheet follows as such:
+
 | Person | Spouse | Parent Index | 1 Image URI | 1 Image URI | 1 Image URI | 1 Image URI | 1 Image URI | 2 Image URI | 2 Image URI | 2 Image URI | 2 Image URI | 2 Image URI | 2 Image URI |
 |--------|--------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|
 
@@ -31,4 +32,11 @@ To view any other tree, link this client to your own Google account and sheet.
 4. Make sure that all childeren point to the correct parent index.
 5. Note that 'none' will cause clients to treat value as non-existent, while you may use 'Unknown' to label values not currently available, but which do exist.
 
-### Client Updates
+### Client Setup
+It is highly unlikely that anyone would ever want to use this client as it's codebase is a mess and hard to understand or update, but for documentation purposes, here is how to setup the client to interface with Google Sheets
+1. In **index.html*** find `SPREADSHEET_ID`, and replace with your spreadsheets's id (can be found in the url while sharing link), and make sure `SPREADSHEET_RANGE` matches your sheets's name at the bottom (not the same as file name).
+2. You will need to generate new `CIPHERTEXT` variables in functions `validateP` and `validateU`
+3. To do so, use **Crypto.html** in a browser with a JS console.
+4. `getCiphertext(pass, data)` will allow you to make a ciphertext of `data` with `password`. You will need to put in the private key found in the JSON file downloaded while setting up Google Cloud Console
+5. testCiphertext(ciphertext, pass) will allow you to test if decryption works with the ciphertext generated.
+6. Both functions accept additional salt, iv arguments, which are set to random defaults. If using changed values, make sure they match the ones in the client.
