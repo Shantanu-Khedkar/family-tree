@@ -2,6 +2,9 @@
 
 This is a client to view a family tree stored in a Google Sheet. This repo currently hosts a client trying to fetch a family tree in a sheet, whose API key and account name are encrypted by the hash of a username and password.
 
+<img width="1080" height="720" alt="image" src="https://github.com/user-attachments/assets/2873193a-91a5-44e9-9a9c-722df47c0c0d" />
+
+
 ## Usage
 To view any other tree, link this client to your own Google account and sheet.
 
