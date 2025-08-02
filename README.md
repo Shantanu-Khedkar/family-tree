@@ -8,7 +8,7 @@ To view any other tree, link this client to your own Google account and sheet.
 ### Google Cloud Console Setup
 1. Create a new project in [Google Cloud Console](https://console.cloud.google.com)
 2. In the **APIs & Services** Section, click **Enable APIs and Services**, then find and enable the **Google Sheets API**
-3. Create a **Service Account** by clicking **Create Credentials***
+3. Create a **Service Account** by clicking **Create Credentials**
 4. After creation go to the **Keys** tab and create a key in JSON format, then download.
 5. Now, create a new Google Sheet, and share it with service account email as a viewer
 
@@ -16,6 +16,8 @@ To view any other tree, link this client to your own Google account and sheet.
 1. The opened sheet should be named **FamilyTree**
 2. The format of a node or person in the sheet follows as such:
 | Person | Spouse | Parent Index | 1 Image URI | 1 Image URI | 1 Image URI | 1 Image URI | 1 Image URI | 2 Image URI | 2 Image URI | 2 Image URI | 2 Image URI | 2 Image URI | 2 Image URI |
+|--------|--------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|
+
    
   | Cell  | Format |
 | ------------- | ------------- |
@@ -24,5 +26,9 @@ To view any other tree, link this client to your own Google account and sheet.
 | Parent Index  | (Parent Cell Row + 1), or (none)  |
 | 1 Image URI  | Base64 Image Data URI - Member, or (none)  |
 | 2 Image URI  | Base64 Image Data URI - Spouse, or (none)  |
-   
-   
+
+3. To add childeren, simply continue adding rows with new people, and reference to parent indexes.
+4. Make sure that all childeren point to the correct parent index.
+5. Note that 'none' will cause clients to treat value as non-existent, while you may use 'Unknown' to label values not currently available, but which do exist.
+
+### Client Updates
