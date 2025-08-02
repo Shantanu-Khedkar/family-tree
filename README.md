@@ -15,7 +15,7 @@ To view any other tree, link this client to your own Google account and sheet.
 ### Sheet Data Structure
 1. The opened sheet should be named **FamilyTree**
 2. The format of a node or person in the sheet follows as such:
-   | Person | Spouse | Parent Index | 1 Image URI | 1 Image URI | 1 Image URI | 1 Image URI | 1 Image URI | 2 Image URI | 2 Image URI | 2 Image URI | 2 Image URI | 2 Image URI | 2 Image URI |
+| Person | Spouse | Parent Index | 1 Image URI | 1 Image URI | 1 Image URI | 1 Image URI | 1 Image URI | 2 Image URI | 2 Image URI | 2 Image URI | 2 Image URI | 2 Image URI | 2 Image URI |
    
   | Cell  | Format |
 | ------------- | ------------- |
