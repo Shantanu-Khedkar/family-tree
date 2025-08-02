@@ -34,9 +34,10 @@ To view any other tree, link this client to your own Google account and sheet.
 
 ### Client Setup
 It is highly unlikely that anyone would ever want to use this client as it's codebase is a mess and hard to understand or update, but for documentation purposes, here is how to setup the client to interface with Google Sheets
-1. In **index.html*** find `SPREADSHEET_ID`, and replace with your spreadsheets's id (can be found in the url while sharing link), and make sure `SPREADSHEET_RANGE` matches your sheets's name at the bottom (not the same as file name).
+1. In **index.html** find `SPREADSHEET_ID`, and replace with your spreadsheets's id (can be found in the url while sharing link), and make sure `SPREADSHEET_RANGE` matches your sheets's name at the bottom (not the same as file name).
 2. You will need to generate new `CIPHERTEXT` variables in functions `validateP` and `validateU`
 3. To do so, use **Crypto.html** in a browser with a JS console.
 4. `getCiphertext(pass, data)` will allow you to make a ciphertext of `data` with `password`. You will need to put in the private key found in the JSON file downloaded while setting up Google Cloud Console
 5. testCiphertext(ciphertext, pass) will allow you to test if decryption works with the ciphertext generated.
 6. Both functions accept additional salt, iv arguments, which are set to random defaults. If using changed values, make sure they match the ones in the client.
+7. Replace both instances of `CIPHERTEXT` with the ciphertext for the username and password (generate two ciphertexts using pass as first password then username...)
