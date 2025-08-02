@@ -1,5 +1,5 @@
     /*  :root {
-  --Background: url(Kamini.jpg);
+  --Background: url(flowers.jpg);
   --TreeOutline: #f3f5f5;
   --Node: rgba(228, 243, 255, 0.921);
   --NodeSelect: rgb(94 230 188);
@@ -594,4 +594,5 @@ width:auto;
     60% {
       transform: translate3d(4px, 0, 0);
     }
+
   }
